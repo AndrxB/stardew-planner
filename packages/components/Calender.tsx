@@ -1,7 +1,7 @@
 import { Minus, Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import Button from "../ui/Button";
-import { H1, H2 } from "../ui/typography"
+import { H1, H2, P } from "../ui/typography"
 import { cn } from "../ui/utils";
 import DayModal from "./DayModal";
 import type { SeasonType } from "./CropSchema";
@@ -206,20 +206,20 @@ export default function Calendar() {
                   "bg-slate-950 text-white hover:bg-slate-950 shadow-[inset_0_4px_10px_rgba(0,0,0,0.55),inset_0_-1px_0_rgba(255,255,255,0.06)]"
               )}
             >
-              {season}
+              <P>{season}</P>
             </Button>
           );
         })}
       </nav>
 
       <div className="grid grid-cols-7 border-y-2 border-slate-800 bg-slate-700 px-2 py-2 text-center text-sm font-bold uppercase tracking-wide text-orange-100">
-        <div>M</div>
-        <div>T</div>
-        <div>W</div>
-        <div>Th</div>
-        <div>F</div>
-        <div>Sa</div>
-        <div>Su</div>
+        <P>M</P>
+        <P>T</P>
+        <P>W</P>
+        <P>Th</P>
+        <P>F</P>
+        <P>Sa</P>
+        <P>Su</P>
       </div>
 
       <div className="grid grid-cols-7 bg-slate-900">
