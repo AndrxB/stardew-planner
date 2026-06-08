@@ -1,9 +1,9 @@
-import { Duration } from "./duration";
+import type { Duration } from "./duration";
 
-export type Quality = "default" | "silver" | "gold" | "iridium"
-export type Process = "keg" | "aging" | "preserving"
+type Quality = "default" | "silver" | "gold" | "iridium"
+type Process = "keg" | "aging" | "preserving"
 
-export type ProcessRecipe = {
+type ProcessRecipe = {
     processId           : Process;
     duration            : Duration;
     outPutName          : (inputName?: string) => string;
@@ -11,7 +11,7 @@ export type ProcessRecipe = {
     quality             : Quality;
 };
 
-type ProcessSuccess = {
+type ProcessSuccess ={
     process : Process;
     quality : Quality;
     name    : string;
@@ -35,12 +35,17 @@ let process = (recipe: ProcessRecipe, inputName?: string, basePrice?: number) : 
     var name = recipe.outPutName(inputName)
     var price = recipe.calculateOutputPrice(basePrice)
 
-    if (!quality) return fail("quality")
-    if (!name) return fail("output")
-    if (basePrice = 0) fail("base price must be larger 0!")
-    if (!price) fail("base price must be larger than 0!")
+    if (!quality) 
+        return fail("quality")
+    if (!name) 
+        return fail("output")
+    if (basePrice = 0) 
+        return fail("base price must be larger 0!")
+    if (!price) 
+        return fail("base price must be larger than 0!")
 
     return {ok: true, result: {process, quality, name, price : Math.floor(price)}}
 }
 
-export { process, Duration }
+export { process }
+export type { ProcessFailure, ProcessSuccess, ProcessResult, ProcessRecipe, Quality, Process }

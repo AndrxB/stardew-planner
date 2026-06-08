@@ -1,16 +1,18 @@
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import Button from "../ui/Button";
-import type { CalendarDayType } from "./Calender";
 import { useEffect, useState } from "react";
+import type { MonthDay } from "../storage/calenderStorage";
+import { getSeasonalCrops, type Plantable, type SeasonType } from "./CropSchema";
 
 type DayModalProps = {
   open: boolean;
-  day: CalendarDayType | null;
+  day: MonthDay | null;
+  season: SeasonType
   onClose: () => void;
-  onSave: (updatedDay: CalendarDayType) => void;
+  onSave: (updatedDay: MonthDay) => void;
 };
 
-const DayModal = ({ open, day, onClose, onSave }: DayModalProps) => {
+const DayModal = ({ open, day, onClose, onSave, season = "Spring" }: DayModalProps) => {
   const [cropsInput, setCropsInput] = useState("");
   const [machinesInput, setMachinesInput] = useState("");
 
@@ -28,7 +30,7 @@ const DayModal = ({ open, day, onClose, onSave }: DayModalProps) => {
   const handleSave = () => {
     if (!day) return;
 
-    const updatedDay: CalendarDayType = {
+    const updatedDay: MonthDay = {
       ...day,
       crops: splitCsvInput(cropsInput),
       machines: splitCsvInput(machinesInput),
@@ -36,6 +38,8 @@ const DayModal = ({ open, day, onClose, onSave }: DayModalProps) => {
 
     onSave(updatedDay);
   };
+
+  const seasonalCrops = getSeasonalCrops(season)
 
   return (
     <Dialog open={open} onClose={onClose} >
@@ -47,8 +51,29 @@ const DayModal = ({ open, day, onClose, onSave }: DayModalProps) => {
             {day ? `Edit Day ${day.day}` : "Edit Day"}
           </DialogTitle>
 
+          <div hidden className="flex bg-slate-800">
+            <img src={`/seeds/Jazz_Seeds.png`} />
+            <select>
+              <option selected disabled hidden>Select {season} crop </option>
+              { seasonalCrops.map(crop => {
+                return (
+                  <div className="flex flex-row">
+                    <img src={`/seeds/${crop.seedName.replaceAll(" ", "_")}.png`}/>
+                    <option value={crop.cropName}>{crop.cropName} </option>
+                  </div>
+                )
+              })}
+            </select>
+            <input type="number" min={1} />
+          </div>
+
           <div className="flex flex-col gap-4">
-            <div>
+            
+            <DropDownSelect value={cropsInput} crops={seasonalCrops} onSubmit={crop => setCropsInput(crop)} /> 
+
+
+
+            <div hidden>
               <label htmlFor="crops" className="block text-sm mb-1">
                 Crops
               </label>
@@ -61,7 +86,7 @@ const DayModal = ({ open, day, onClose, onSave }: DayModalProps) => {
               />
             </div>
 
-            <div>
+            <div hidden>
               <label htmlFor="machines" className="block text-sm mb-1">
                 Machines
               </label>
@@ -73,7 +98,7 @@ const DayModal = ({ open, day, onClose, onSave }: DayModalProps) => {
                 className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 outline-none"
               />
             </div>
-
+            
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" onClick={onClose}>
                 Cancel
@@ -86,6 +111,40 @@ const DayModal = ({ open, day, onClose, onSave }: DayModalProps) => {
     </Dialog>
   );
 };
+
+type DropDownSelectProps = {
+  value: string
+  crops: Plantable[];
+  onSubmit: (crop: string) => void
+}
+
+const DropDownSelect = ({
+  value = "Select Crop",
+  crops,
+  onSubmit
+}: DropDownSelectProps) => {
+  const [open, setOpen] = useState(false)
+  
+  const handleOnSubmit = (crop: string) => {
+    setOpen(false)
+    onSubmit(crop)
+  }
+
+  
+  return(
+    <div className="mx-auto flex flex-col bg-500">
+      <span>{value}</span>
+      { open && crops.map( plantable => {
+        return(
+          <Button onSubmit={() => handleOnSubmit(plantable.seedName) }>
+            <img src={`/seeds/${plantable.seedName.replace(" ", "_")}.png`}/>
+            {plantable.seedName}
+          </Button>
+        )
+      })}
+    </div>
+  )
+}
 
 const splitCsvInput = (value: string): string[] =>
   value

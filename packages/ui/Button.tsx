@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "./utils";
 
 type size = "default" | "xs";
-type variant = "default" | "link" | "reverse" | "outline" | "zoom";
+type variant = "default" | "link" | "reverse" | "outline" | "zoom" ;
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 	className?: string;
@@ -57,28 +57,32 @@ const Button = ({
 		);
 	}
 
-	if(variant === "zoom") {
+	if (variant === "zoom") {
 		return (
 			<button
-				className={cn(
-					"bg-primary text-white rounded-xl font-medium ",
-					sizeClasses,
-					className
-				)}
-				{...props}
+			className={cn(
+				"bg-transparent border-0 outline-none ring-0 shadow-none p-0",
+				"inline-flex items-center justify-center",
+				className
+			)}
+			{...props}
 			>
-				{children}
+			{children}
 			</button>
 		);
-	}
+		}
 	// Default button variant
 	return (
 		<button
 			className={cn(
-				"bg-primary text-white rounded-xl font-medium hover:bg-primary/85 hover:shadow-md transition-all duration-300 cursor-pointer",
+				"bg-primary text-white rounded-xl font-medium hover:bg-primary/85  transition-all duration-300",
 				sizeClasses,
+				!disabled &&
+					"hover:bg-slate-700/75 hover:shadow-md transition-all duration-300 cursor-pointer",
+				disabled &&
 				className
 			)}
+			disabled = {disabled}
 			{...props}
 		>
 			{children}
